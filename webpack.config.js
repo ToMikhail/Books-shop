@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   name: "browser",
@@ -9,9 +10,9 @@ module.exports = {
 
   devServer: {
     port: 9000,
-    hot: true,
+    // hot: true,
     static: {
-      directory: path.join(__dirname, './dist'),
+      directory: path.join(__dirname, "./dist"),
     },
   },
   entry: {
@@ -32,6 +33,12 @@ module.exports = {
     new CleanWebpackPlugin(),
     // применять изменения только при горячей перезагрузке
     new webpack.HotModuleReplacementPlugin(),
+
+    new CopyPlugin({
+      patterns: [
+        { from: __dirname +  '/src/assets/images', to: "src/assets/images" },
+      ],
+    }),
   ],
 
   module: {
@@ -47,9 +54,14 @@ module.exports = {
       {
         test: /\.(?:ico|gif|png|jpg|jpeg)$/i,
         type: "asset/resource",
+        // loader: 'file-loader',
+        // options:{
+        // name: '/images/[sha512:hash:base64:7].[ext]',
+        //   outputPath :  '/images/',
+        // }
       },
 
-      // шрифты и SVG
+      // fonts и SVG
       {
         test: /\.(woff(2)?|eot|ttf|otf|svg|)$/,
         type: "asset/inline",
@@ -60,6 +72,12 @@ module.exports = {
         test: /\.(scss|css)$/,
         use: ["style-loader", "css-loader", "postcss-loader", "sass-loader"],
       },
+
+      // JSON
+      // {
+      //   test: /\.json$/i,
+      //   type: "asset/resource",
+      // },
     ],
   },
 };
